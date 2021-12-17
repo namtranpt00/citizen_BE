@@ -14,10 +14,8 @@ class AuthController extends Controller
     {
         try {
             $fields = $request->validate([
-                'name' => 'required|string',
-                'email' => 'required|string',
-                'password' => 'required|string|confirmed',
-                'permission' => 'required',
+                'password' => 'required|string',
+                'permission' => 'required|string',
                 'role' => 'required',
                 'start_at' => 'required|date',
                 'end_at' => 'required|date|after:start_at'
@@ -25,11 +23,9 @@ class AuthController extends Controller
             $isExist = User::where('permission', $fields['permission'])
                 ->where('is_deleted', 0)
                 ->first();
-//            return $isExist;
             if (!$isExist) {
                 $user =  User::create([
-                    "name" => $fields['name'],
-                    "email" => $fields['email'],
+                    "name" => $fields['permission'],
                     "password" => bcrypt($fields['password']),
                     "permission" => $fields['permission'],
                     "role" => $fields['role'],
@@ -49,10 +45,10 @@ class AuthController extends Controller
                 return response($response, 201);
             }
         } catch (\Exception $e) {
-//            return $e;
+            return $e;
             $response = [
                 'success' => false,
-                'message' => "Cannot regist new account, check if account already exists or not!!",
+                'message' => "Cannot regist new account!!",
             ];
             return response($response, 201);
         }
@@ -64,8 +60,6 @@ class AuthController extends Controller
     {
         try {
             $fields = $request->validate([
-                'name' => 'required|string',
-                'email' => 'required|string',
                 'password' => 'required|string',
                 'permission' => 'required',
                 'role' => 'required',
@@ -75,8 +69,7 @@ class AuthController extends Controller
             $user = User::findOrFail($id);
             if ($user) {
                 $user->update([
-                    "name" => $fields['name'],
-                    "email" => $fields['email'],
+                    "name" => $fields['permission'],
                     "password" => bcrypt($fields['password']),
                     "permission" => $fields['permission'],
                     "role" => $fields['role'],
