@@ -104,12 +104,12 @@ class AuthController extends Controller
     {
         try {
             $fields = $request->validate([
-                'email' => 'required|string',
+                'name' => 'required|string',
                 'password' => 'required|string',
             ]);
 
             $user = User::where('is_deleted', 0)
-                ->where('email', $fields['email'])
+                ->where('name', $fields['name'])
                 ->first();
             $now = date('Y-m-d');
 
