@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -9,80 +10,107 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function register(Request $request){
-        $fields = $request -> validate([
-            'name' => 'required|string',
-            'email' => 'required|string|unique:users,email',
-            'password' => 'required|string|confirmed',
-            'permission' => 'required',
-            'role' => 'required',
-            'start_at' => 'required|date',
-            'end_at' => 'required|date|after:start_at'
-        ]);
-
-        $user = User::create([
-            "name" => $fields['name'],
-            "email" => $fields['email'],
-            "password" => bcrypt($fields['password']),
-            "permission" => $fields['permission'],
-            "role" => $fields['role'],
-            "start_at" => $fields['start_at'],
-            "end_at" => $fields['end_at'],
-        ]);
-        $response = [
-            'success' => true,
-            'user' => $user
-        ];
-
-        return response($response, 201);
-    }
-
-    public function update_user(Request $request, $id){
-        $fields = $request-> validate([
-            'name' => 'required|string',
-            'email' => 'required|string',
-            'password' => 'required|string',
-            'permission' => 'required',
-            'role' => 'required',
-            'start_at' => 'required|date',
-            'end_at' => 'required|date|after:start_at'
-        ]);
-        $user = User::findOrFail($id);
-        if($user){
-            $user->update([
-                "name" => $fields['name'],
-                "email" => $fields['email'],
-                "password" => bcrypt($fields['password']),
-                "permission" => $fields['permission'],
-                "role" => $fields['role'],
-                "start_at" => $fields['start_at'],
-                "end_at" => $fields['end_at'],
+    public function register(Request $request)
+    {
+        try {
+            $fields = $request->validate([
+                'name' => 'required|string',
+                'email' => 'required|string',
+                'password' => 'required|string|confirmed',
+                'permission' => 'required',
+                'role' => 'required',
+                'start_at' => 'required|date',
+                'end_at' => 'required|date|after:start_at'
             ]);
+            $isExist = User::where('permission', $fields['permission'])
+                ->where('is_deleted', 0)
+                ->first();
+//            return $isExist;
+            if (!$isExist) {
+                $user =  User::create([
+                    "name" => $fields['name'],
+                    "email" => $fields['email'],
+                    "password" => bcrypt($fields['password']),
+                    "permission" => $fields['permission'],
+                    "role" => $fields['role'],
+                    "start_at" => $fields['start_at'],
+                    "end_at" => $fields['end_at'],
+                ]);
+                $response = [
+                    'success' => true,
+                    'user' => $user
+                ];
+                return response($response, 201);
+            } else {
+                $response = [
+                    'success' => false,
+                    'message' => "Account already exists !!",
+                ];
+                return response($response, 201);
+            }
+        } catch (\Exception $e) {
+//            return $e;
             $response = [
-                'success' => true,
-                'user' => $user
+                'success' => false,
+                'message' => "Cannot regist new account, check if account already exists or not!!",
             ];
             return response($response, 201);
         }
-        else
-            return ['message' => 'cannot update user'];
+
     }
 
-    public function delete_user($id){
-        $user = User::findOrFail($id);
-        if($user)
-            $user->update([
-                'is_deleted' => 1
-            ]);
-        else
-            return ['message' => 'user not found'];
-        return [
-            'message' => 'deleted user'
-        ];
-    }
-    public function login(Request $request){
+
+    public function update_user(Request $request, $id)
+    {
         try {
-            $fields = $request -> validate([
+            $fields = $request->validate([
+                'name' => 'required|string',
+                'email' => 'required|string',
+                'password' => 'required|string',
+                'permission' => 'required',
+                'role' => 'required',
+                'start_at' => 'required|date',
+                'end_at' => 'required|date|after:start_at'
+            ]);
+            $user = User::findOrFail($id);
+            if ($user) {
+                $user->update([
+                    "name" => $fields['name'],
+                    "email" => $fields['email'],
+                    "password" => bcrypt($fields['password']),
+                    "permission" => $fields['permission'],
+                    "role" => $fields['role'],
+                    "start_at" => $fields['start_at'],
+                    "end_at" => $fields['end_at'],
+                ]);
+                $response = [
+                    'success' => true,
+                    'user' => $user
+                ];
+                return response($response, 201);
+            }
+        } catch (\Exception $e) {
+            $response = [
+                'success' => false,
+                'message' => "Cannot update user, please check the input again!!",
+            ];
+            return response($response, 201);
+        }
+    }
+
+    public function delete_user($id)
+    {
+        User::where('permission', 'like', $id . "%")->update(['is_deleted' => 1]);
+        return response([
+            'success' => true,
+            'message' => "deleted user"
+        ], 201);
+    }
+
+    public function login(Request $request)
+    {
+        try {
+            $fields = $request->validate([
                 'email' => 'required|string',
                 'password' => 'required|string',
             ]);
@@ -92,11 +120,11 @@ class AuthController extends Controller
                 ->first();
             $now = date('Y-m-d');
 
-            if ($now >= $user->start_at && $now <= $user->end_at){
+            if ($now >= $user->start_at && $now <= $user->end_at) {
                 $is_active = 1;
             } else $is_active = 0;
 
-            if (!$user || !Hash::check($fields['password'], $user->password)){
+            if (!$user || !Hash::check($fields['password'], $user->password)) {
                 return response([
                     'success' => false,
                     'message' => "user not found or password was wrong!!"
@@ -120,7 +148,8 @@ class AuthController extends Controller
         }
     }
 
-    public function logout(Request $request){
+    public function logout(Request $request)
+    {
         auth()->user()->tokens()->delete();
         return [
             'message' => 'logged out'
