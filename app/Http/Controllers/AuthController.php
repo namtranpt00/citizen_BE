@@ -100,7 +100,7 @@ class AuthController extends Controller
                 return response([
                     'success' => false,
                     'message' => "user not found or password was wrong!!"
-                ], 401);
+                ], 201);
             }
 
             $token = $user->createToken('myapptoken')->plainTextToken;
