@@ -19,5 +19,9 @@ class Hamlet extends Model
         'district_id',
         'ward_id',
     ];
+    protected $hidden = [
+        "created_at",
+        "updated_at"
+    ];
 
 }

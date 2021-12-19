@@ -31,6 +31,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('user/update/{id}', [AuthController::class, 'update_user']);
     Route::delete('user/{id}', [AuthController::class, 'delete_user']);
     Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('user/list', [AuthController::class, 'list']);
     //Tỉnh
     Route::resource('province', ProvinceController::class);
     Route::post('province/list', [ProvinceController::class, 'list']);

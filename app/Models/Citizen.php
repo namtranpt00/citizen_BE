@@ -25,4 +25,8 @@ class Citizen extends Model
         'education_level',
         'job',
     ];
+    protected $hidden = [
+        "created_at",
+        "updated_at"
+    ];
 }

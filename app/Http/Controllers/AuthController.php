@@ -55,7 +55,6 @@ class AuthController extends Controller
 
     }
 
-
     public function update_user(Request $request, $id)
     {
         try {
@@ -147,5 +146,25 @@ class AuthController extends Controller
         return [
             'message' => 'logged out'
         ];
+    }
+
+    public function list(Request $request){
+        $fields = $request->validate([
+            'name' => 'nullable|string',
+            'permission' => 'nullable|string',
+            'role' => 'required',
+        ]);
+        $users = User::where('role', $fields['role'] + 1)->orderBy('id');
+        if (isset($request->permission) && $fields['role'] != 1) {
+            $users = $users->where('permission', 'LIKE', $fields['permission'] . '%');
+        }
+        if (isset($request->name)) {
+            $users = $users->where('name', 'LIKE', '%' . $fields['name'] . '%');
+        }
+        $response = [
+            'success' => true,
+            'users' => $users->get()
+        ];
+        return response($response, 201);
     }
 }

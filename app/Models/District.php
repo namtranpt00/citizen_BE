@@ -16,4 +16,8 @@ class District extends Model
         'id',
         'name',
     ];
+    protected $hidden = [
+        "created_at",
+        "updated_at"
+    ];
 }
