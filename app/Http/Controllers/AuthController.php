@@ -17,8 +17,6 @@ class AuthController extends Controller
                 'password' => 'required|string',
                 'permission' => 'required|string',
                 'role' => 'required',
-                'start_at' => 'required|date',
-                'end_at' => 'required|date|after:start_at'
             ]);
             $isExist = User::where('permission', $fields['permission'])
                 ->where('is_deleted', 0)
@@ -29,8 +27,6 @@ class AuthController extends Controller
                     "password" => bcrypt($fields['password']),
                     "permission" => $fields['permission'],
                     "role" => $fields['role'],
-                    "start_at" => $fields['start_at'],
-                    "end_at" => $fields['end_at'],
                 ]);
                 $response = [
                     'success' => true,
@@ -45,14 +41,12 @@ class AuthController extends Controller
                 return response($response, 201);
             }
         } catch (\Exception $e) {
-            return $e;
             $response = [
                 'success' => false,
                 'message' => "Cannot regist new account!!",
             ];
             return response($response, 201);
         }
-
     }
 
     public function update_user(Request $request, $id)
@@ -61,19 +55,22 @@ class AuthController extends Controller
             $fields = $request->validate([
                 'password' => 'required|string',
                 'permission' => 'required',
-                'role' => 'required',
                 'start_at' => 'required|date',
-                'end_at' => 'required|date|after:start_at'
+                'end_at' => 'required|date|after:start_at',
+                'is_active' => 'required',
             ]);
+            if ($fields['is_active'] == 0) {
+                User::where('permission', 'like', $fields['permission'] . "%")->update(['is_active' => $fields['is_active']]);
+            }
             $user = User::findOrFail($id);
             if ($user) {
                 $user->update([
                     "name" => $fields['permission'],
                     "password" => bcrypt($fields['password']),
                     "permission" => $fields['permission'],
-                    "role" => $fields['role'],
                     "start_at" => $fields['start_at'],
                     "end_at" => $fields['end_at'],
+                    "is_active" => $fields['is_active'],
                 ]);
                 $response = [
                     'success' => true,
@@ -113,7 +110,7 @@ class AuthController extends Controller
             $now = date('Y-m-d');
 
             if ($now >= $user->start_at && $now <= $user->end_at) {
-                $is_active = 1;
+                $is_active = $fields['is_active'];
             } else $is_active = 0;
 
             if (!$user || !Hash::check($fields['password'], $user->password)) {

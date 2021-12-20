@@ -27,6 +27,7 @@ class User extends Authenticatable
         'start_at',
         'end_at',
         'is_deleted',
+        'is_active'
     ];
 
     /**
@@ -38,7 +39,8 @@ class User extends Authenticatable
         'password',
         'remember_token',
         "created_at",
-        "updated_at"
+        "updated_at",
+        "is_deleted"
     ];
 
     /**
