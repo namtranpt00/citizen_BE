@@ -15,6 +15,8 @@ class District extends Model
     protected $fillable = [
         'id',
         'name',
+        'is_done',
+        'type'
     ];
     protected $hidden = [
         "created_at",

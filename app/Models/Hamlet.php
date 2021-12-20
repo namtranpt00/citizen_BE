@@ -15,9 +15,8 @@ class Hamlet extends Model
     protected $fillable = [
         'id',
         'name',
-        'province_id',
-        'district_id',
-        'ward_id',
+        'is_done',
+        'type'
     ];
     protected $hidden = [
         "created_at",

@@ -56,8 +56,8 @@ class AuthController extends Controller
                 'password' => 'required|string',
                 'permission' => 'required',
                 'start_at' => 'required|date',
-                'end_at' => 'required|date|after:start_at',
-                'is_active' => 'required',
+                'end_at' => 'nullable|date|after:start_at',
+                'is_active' => 'nullable',
             ]);
             if ($fields['is_active'] == 0) {
                 User::where('permission', 'like', $fields['permission'] . "%")->update(['is_active' => $fields['is_active']]);
@@ -86,6 +86,7 @@ class AuthController extends Controller
             return response($response, 201);
         }
     }
+
 
     public function delete_user($id)
     {
