@@ -49,7 +49,7 @@ class AuthController extends Controller
                 'success' => false,
                 'message' => "Cannot regist new account!!",
             ];
-            return response($response, 201);
+            return response($response, 200);
         }
     }
 
@@ -80,25 +80,32 @@ class AuthController extends Controller
                     'success' => true,
                     'user' => $user
                 ];
-                return response($response, 201);
+                return response($response, 200);
             }
         } catch (\Exception $e) {
             $response = [
                 'success' => false,
                 'message' => "Cannot update user, please check the input again!!",
             ];
-            return response($response, 201);
+            return response($response, 200);
         }
     }
 
 
     public function delete_user($id)
     {
-        User::where('permission', 'like', $id . "%")->update(['is_deleted' => 1]);
-        return response([
-            'success' => true,
-            'message' => "deleted user"
-        ], 201);
+        try {
+            User::where('permission', 'like', $id . "%")->update(['is_deleted' => 1]);
+            return response([
+                'success' => true,
+                'message' => "deleted user"
+            ], 200);
+        } catch (\Exception $e) {
+            return response([
+                'success' => false,
+                'message' => "cannot delete user !!"
+            ], 200);
+        }
     }
 
     public function login(Request $request)
@@ -122,7 +129,7 @@ class AuthController extends Controller
                 return response([
                     'success' => false,
                     'message' => "user not found or password was wrong!!"
-                ], 201);
+                ], 200);
             }
 
             $token = $user->createToken('myapptoken')->plainTextToken;
@@ -132,13 +139,13 @@ class AuthController extends Controller
                 'is_acitve' => $is_active,
                 'token' => $token
             ];
-            return response($response, 201);
+            return response($response, 200);
         } catch (\Exception $e) {
             $response = [
                 'success' => false,
                 'message' => "User not found or password was wrong!!",
             ];
-            return response($response, 201);
+            return response($response, 200);
         }
     }
 
