@@ -17,6 +17,8 @@ class AuthController extends Controller
                 'password' => 'required|string',
                 'permission' => 'required|string',
                 'role' => 'required',
+                'start_at' => 'nullable|date',
+                'end_at' => 'nullable|date',
             ]);
             $isExist = User::where('permission', $fields['permission'])
                 ->where('is_deleted', 0)
@@ -27,6 +29,8 @@ class AuthController extends Controller
                     "password" => bcrypt($fields['password']),
                     "permission" => $fields['permission'],
                     "role" => $fields['role'],
+                    "start_at" => $fields['start_at'],
+                    "end_at" => $fields['end_at'],
                 ]);
                 $response = [
                     'success' => true,
@@ -111,7 +115,7 @@ class AuthController extends Controller
             $now = date('Y-m-d');
 
             if ($now >= $user->start_at && $now <= $user->end_at) {
-                $is_active = $fields['is_active'];
+                $is_active = $user['is_active'];
             } else $is_active = 0;
 
             if (!$user || !Hash::check($fields['password'], $user->password)) {
