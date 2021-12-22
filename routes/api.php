@@ -8,7 +8,7 @@ use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\WardController;
 use App\Http\Controllers\HamletController;
 use App\Http\Controllers\CitizenController;
-use App\Http\Controllers\RegulateController;
+use App\Http\Controllers\StatisticController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -50,6 +50,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('citizen/list', [CitizenController::class, 'list']);
 
     //regulate
-    Route::post('/mark_done', [RegulateController::class, 'mark_done']);
+    Route::post('/mark_done', [StatisticController::class, 'mark_done']);
+    Route::post('/statistic', [StatisticController::class, 'statistic']);
 
 });
