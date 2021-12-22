@@ -16,6 +16,7 @@ class AuthController extends Controller
             $fields = $request->validate([
                 'password' => 'required|string',
                 'permission' => 'required|string',
+                'area' => 'required|string',
                 'role' => 'required',
                 'start_at' => 'nullable|date',
                 'end_at' => 'nullable|date',
@@ -31,6 +32,7 @@ class AuthController extends Controller
                     "role" => $fields['role'],
                     "start_at" => $fields['start_at'],
                     "end_at" => $fields['end_at'],
+                    "area" => $fields['area'],
                 ]);
                 $response = [
                     'success' => true,
@@ -62,6 +64,7 @@ class AuthController extends Controller
                 'start_at' => 'required|date',
                 'end_at' => 'nullable|date|after:start_at',
                 'is_active' => 'nullable',
+                'area' => 'required|string',
             ]);
             if ($fields['is_active'] == 0) {
                 User::where('permission', 'like', $fields['permission'] . "%")->update(['is_active' => $fields['is_active']]);
@@ -75,6 +78,7 @@ class AuthController extends Controller
                     "start_at" => $fields['start_at'],
                     "end_at" => $fields['end_at'],
                     "is_active" => $fields['is_active'],
+                    "area" => $fields['area'],
                 ]);
                 $response = [
                     'success' => true,

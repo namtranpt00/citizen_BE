@@ -27,7 +27,8 @@ class User extends Authenticatable
         'start_at',
         'end_at',
         'is_deleted',
-        'is_active'
+        'is_active',
+        'area'
     ];
 
     /**
