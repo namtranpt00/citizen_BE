@@ -168,6 +168,8 @@ class AuthController extends Controller
             'role' => 'required',
         ]);
         $users = User::where('role', $fields['role'] + 1)->orderBy('id');
+//        $num_of_done = $users->where('is_done',  1 )->count();
+//        return $num_of_done;
         if (isset($request->permission) && $fields['role'] != 1) {
             $users = $users->where('permission', 'LIKE', $fields['permission'] . '%');
         }

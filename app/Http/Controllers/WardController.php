@@ -10,6 +10,13 @@ class WardController extends Controller
     public function genID($request){
         return $request->permission . $request->id;
     }
+    public function count_done($wards){
+        $count = 0;
+        foreach ($wards as $ward){
+            if ($ward['is_done'] == 1) $count ++;
+        }
+        return $count;
+    }
 
     public function store(Request $request)
     {
@@ -91,9 +98,11 @@ class WardController extends Controller
             if (isset($request->name)) {
                 $wards = $wards->where('name', 'LIKE', '%' . $request->name . '%');
             }
+            $wards = $wards->get();
             $response = [
                 'success' => true,
-                'wards' => $wards->get()
+                'wards' => $wards,
+                'num_of_done' => $this->count_done($wards)
             ];
             return response($response, 200);
         } catch (\Exception $e){

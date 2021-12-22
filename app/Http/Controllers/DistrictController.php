@@ -8,6 +8,14 @@ use PHPUnit\Exception;
 
 class DistrictController extends Controller
 {
+    public function count_done($districts){
+        $count = 0;
+        foreach ($districts as $district){
+            if ($district['is_done'] == 1) $count ++;
+        }
+        return $count;
+    }
+
     public function genID($request){
         return $request->permission . $request->id;
     }
@@ -84,9 +92,11 @@ class DistrictController extends Controller
             if (isset($request->name)) {
                 $districts = $districts->where('name', 'LIKE', '%' . $request->name . '%');
             }
+            $districts = $districts->get();
             $response = [
                 'success' => true,
-                'districts' => $districts->get()
+                'districts' => $districts,
+                'num_of_done' => $this->count_done($districts)
             ];
             return response($response, 200);
         } catch (\Exception $e){

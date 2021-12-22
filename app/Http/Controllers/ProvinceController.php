@@ -7,6 +7,13 @@ use Illuminate\Http\Request;
 
 class ProvinceController extends Controller
 {
+    public function count_done($provinces){
+        $count = 0;
+        foreach ($provinces as $province){
+            if ($province['is_done'] == 1) $count ++;
+        }
+        return $count;
+    }
     public function store(Request $request){
         try {
             $request->validate([
@@ -72,9 +79,12 @@ class ProvinceController extends Controller
             if (isset($request->name)) {
                 $provinces = $provinces->where('name', 'LIKE', '%' . $request->name . '%');
             }
+            $provinces = $provinces->get();
+
             $response = [
                 'success' => true,
-                'provinces' => $provinces->get()
+                'provinces' => $provinces,
+                'num_of_done' => $this->count_done($provinces)
             ];
             return response($response, 200);
         } catch (\Exception $e) {
