@@ -18,8 +18,6 @@ class AuthController extends Controller
                 'permission' => 'required|string',
                 'area' => 'required|string',
                 'role' => 'required',
-                'start_at' => 'nullable|date',
-                'end_at' => 'nullable|date',
             ]);
             $isExist = User::where('permission', $fields['permission'])
                 ->where('is_deleted', 0)
@@ -30,8 +28,6 @@ class AuthController extends Controller
                     "password" => bcrypt($fields['password']),
                     "permission" => $fields['permission'],
                     "role" => $fields['role'],
-                    "start_at" => $fields['start_at'],
-                    "end_at" => $fields['end_at'],
                     "area" => $fields['area'],
                 ]);
                 $response = [
@@ -168,8 +164,7 @@ class AuthController extends Controller
             'role' => 'required',
         ]);
         $users = User::where('role', $fields['role'] + 1)->orderBy('id');
-//        $num_of_done = $users->where('is_done',  1 )->count();
-//        return $num_of_done;
+
         if (isset($request->permission) && $fields['role'] != 1) {
             $users = $users->where('permission', 'LIKE', $fields['permission'] . '%');
         }
