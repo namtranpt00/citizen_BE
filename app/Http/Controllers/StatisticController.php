@@ -26,14 +26,18 @@ class StatisticController extends Controller
             $num_of_ward = Ward::where('id', "LIKE", $district_id. '%')->count();
             $num_of_ward_done = Ward::where('id', "LIKE", $district_id. '%')->where('is_done', 1)->count();
             if( $num_of_ward == $num_of_ward_done){
-                District::findOrFail($district_id)->update(['is_done' => $fields['is_done']]);
+                District::findOrFail($district_id)->update(['is_done' => 1]);
+            } else {
+                District::findOrFail($district_id)->update(['is_done' => 0]);
             }
 
             $province_id = substr($fields['permission'], 0, 2);
             $num_of_district = District::where('id', "LIKE", $province_id. '%')->count();
             $num_of_district_done = District::where('id', "LIKE", $province_id. '%')->where('is_done', 1)->count();
             if( $num_of_district == $num_of_district_done){
-                Province::findOrFail($province_id)->update(['is_done' => $fields['is_done']]);
+                Province::findOrFail($province_id)->update(['is_done' => 1]);
+            } else {
+                Province::findOrFail($province_id)->update(['is_done' => 0]);
             }
         } catch (\Exception $e) {
             return $e;
