@@ -65,7 +65,8 @@ class AuthController extends Controller
             if ($fields['is_active'] == 0) {
                 User::where('permission', 'like', $fields['permission'] . "%")->update(['is_active' => $fields['is_active']]);
             }
-            $user = User::findOrFail($id);
+            $user = User::where('permission', $id)->where('is_deleted', 0);
+//            return $user->get();
             if ($user) {
                 $user->update([
                     "name" => $fields['permission'],
@@ -78,11 +79,12 @@ class AuthController extends Controller
                 ]);
                 $response = [
                     'success' => true,
-                    'user' => $user
+                    'user' => $user->get()
                 ];
                 return response($response, 200);
             }
         } catch (\Exception $e) {
+            return $e;
             $response = [
                 'success' => false,
                 'message' => "Cannot update user, please check the input again!!",
