@@ -33,6 +33,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('user/{id}', [AuthController::class, 'delete_user']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('user/list', [AuthController::class, 'list']);
+    Route::post('user/update_password/{id}', [AuthController::class, 'update_password']);
     //Tỉnh
     Route::resource('province', ProvinceController::class);
     Route::post('province/list', [ProvinceController::class, 'list']);
