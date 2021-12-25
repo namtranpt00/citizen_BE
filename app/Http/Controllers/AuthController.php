@@ -55,7 +55,6 @@ class AuthController extends Controller
     {
         try {
             $fields = $request->validate([
-                'password' => 'required|string',
                 'permission' => 'required',
                 'start_at' => 'required|date',
                 'end_at' => 'nullable|date|after:start_at',
@@ -66,11 +65,9 @@ class AuthController extends Controller
                 User::where('permission', 'like', $fields['permission'] . "%")->update(['is_active' => $fields['is_active']]);
             }
             $user = User::where('permission', $id)->where('is_deleted', 0);
-//            return $user->get();
             if ($user) {
                 $user->update([
                     "name" => $fields['permission'],
-                    "password" => bcrypt($fields['password']),
                     "permission" => $fields['permission'],
                     "start_at" => $fields['start_at'],
                     "end_at" => $fields['end_at'],
