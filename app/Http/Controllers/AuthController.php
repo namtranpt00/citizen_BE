@@ -56,6 +56,7 @@ class AuthController extends Controller
         try {
             $fields = $request->validate([
                 'permission' => 'required',
+                'password' => 'nullable|string',
                 'start_at' => 'required|date',
                 'end_at' => 'nullable|date|after:start_at',
                 'is_active' => 'nullable',
@@ -66,6 +67,9 @@ class AuthController extends Controller
             }
             $user = User::where('permission', $id)->where('is_deleted', 0);
             if ($user) {
+                if (isset($fields->password)) {
+                    $user->update(["password" => bcrypt($fields['password'])]);
+                }
                 $user->update([
                     "name" => $fields['permission'],
                     "permission" => $fields['permission'],
@@ -81,7 +85,6 @@ class AuthController extends Controller
                 return response($response, 200);
             }
         } catch (\Exception $e) {
-            return $e;
             $response = [
                 'success' => false,
                 'message' => "Cannot update user, please check the input again!!",
