@@ -53,5 +53,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     //regulate
     Route::post('/mark_done', [StatisticController::class, 'mark_done']);
     Route::post('/statistic', [StatisticController::class, 'statistic']);
+    Route::post('/statistic/gender', [StatisticController::class, 'gender_statistic']);
 
 });

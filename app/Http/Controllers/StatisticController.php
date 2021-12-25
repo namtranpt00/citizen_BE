@@ -48,11 +48,18 @@ class StatisticController extends Controller
     {
         try {
             $fields = $request->validate([
-                'permission' => 'required|string',
+                'permission' => 'nullable|string',
             ]);
-            $under15 = Citizen::where("id", "like", $fields['permission'] . "%")->whereRaw("TIMESTAMPDIFF(YEAR,citizen.date_of_birth,CURDATE()) <= ?", array(14))->count();
-            $above60 = Citizen::where("id", "like", $fields['permission'] . "%")->whereRaw("TIMESTAMPDIFF(YEAR,citizen.date_of_birth,CURDATE()) >= ?", array(65))->count();
-            $another = Citizen::where("id", "like", $fields['permission'] . "%")->count() - $under15 - $above60;
+            if( isset($fields['permission'])){
+                $under15 = Citizen::where("id", "like", $fields['permission'] . "%")->whereRaw("TIMESTAMPDIFF(YEAR,citizen.date_of_birth,CURDATE()) <= ?", array(14))->count();
+                $above60 = Citizen::where("id", "like", $fields['permission'] . "%")->whereRaw("TIMESTAMPDIFF(YEAR,citizen.date_of_birth,CURDATE()) >= ?", array(65))->count();
+                $another = Citizen::where("id", "like", $fields['permission'] . "%")->count() - $under15 - $above60;
+            } else {
+                $under15 = Citizen::whereRaw("TIMESTAMPDIFF(YEAR,citizen.date_of_birth,CURDATE()) <= ?", array(14))->count();
+                $above60 = Citizen::whereRaw("TIMESTAMPDIFF(YEAR,citizen.date_of_birth,CURDATE()) >= ?", array(65))->count();
+                $another = Citizen::count() - $under15 - $above60;
+
+            }
             $response = [
                 'success' => true,
                 'data' => [
@@ -62,12 +69,46 @@ class StatisticController extends Controller
                 ]
             ];
             return response($response, 200);
-            return $under15;
-
         } catch (\Exception $e) {
-
+            $response = [
+                'success' => false,
+                'message' => 'some thing went wrong'
+            ];
+            return response($response, 200);
         }
     }
 
+    public function gender_statistic (Request $request){
+        try {
+            $fields = $request->validate([
+                'permission' => 'nullable|string',
+            ]);
+            if( isset($fields['permission'])){
+                $male = Citizen::where("id", "like", $fields['permission'] . "%")->where('gender' , 1)->count();
+                $female = Citizen::where("id", "like", $fields['permission'] . "%")->where('gender' , 2)->count();
+                $total = Citizen::where("id", "like", $fields['permission'] . "%")->count();
+            } else {
+                $male = Citizen::where('gender' , 1)->count();
+                $female = Citizen::where('gender' , 2)->count();
+                $total = Citizen::count();
+            }
+
+            $response = [
+                'success' => true,
+                'data' => [
+                    'male' => $male,
+                    'female' => $female,
+                    'total' => $total
+                ]
+            ];
+            return response($response, 200);
+        } catch (\Exception $e) {
+            $response = [
+                'success' => false,
+                'message' => 'some thing went wrong'
+            ];
+            return response($response, 200);
+        }
+    }
 
 }
