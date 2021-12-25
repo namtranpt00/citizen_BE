@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Hamlet;
 
@@ -107,6 +108,8 @@ class HamletController extends Controller
     public function destroy($id)
     {
         Hamlet::where('id', $id)->delete();
+        User::where('permission', 'like', $id . "%")->update(['is_deleted' => 1]);
+
         return [
             'message' => 'deleted hamlet'
         ];

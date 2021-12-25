@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Ward;
 
@@ -116,6 +117,7 @@ class WardController extends Controller
     public function destroy($id)
     {
         Ward::where('id', $id)->delete();
+        User::where('permission', 'like', $id . "%")->update(['is_deleted' => 1]);
         return [
             'message' => 'deleted ward'
         ];

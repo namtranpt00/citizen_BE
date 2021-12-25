@@ -21,19 +21,19 @@ class StatisticController extends Controller
                 'permission' => 'required|string',
                 'is_done' => 'required',
             ]);
-            switch (strlen($fields['permission'])) {
-                case 8:
-                    Hamlet::findOrFail($fields['permission'])->update(['is_done' => $fields['is_done']]);
-                    break;
-                case 6:
-                    Ward::findOrFail($fields['permission'])->update(['is_done' => $fields['is_done']]);
-                    break;
-                case 4:
-                    District::findOrFail($fields['permission'])->update(['is_done' => $fields['is_done']]);
-                    break;
-                case 2:
-                    Province::findOrFail($fields['permission'])->update(['is_done' => $fields['is_done']]);
-                    break;
+            Ward::findOrFail($fields['permission'])->update(['is_done' => $fields['is_done']]);
+            $district_id = substr($fields['permission'], 0, 4);
+            $num_of_ward = Ward::where('id', "LIKE", $district_id. '%')->count();
+            $num_of_ward_done = Ward::where('id', "LIKE", $district_id. '%')->where('is_done', 1)->count();
+            if( $num_of_ward == $num_of_ward_done){
+                District::findOrFail($district_id)->update(['is_done' => $fields['is_done']]);
+            }
+
+            $province_id = substr($fields['permission'], 0, 2);
+            $num_of_district = District::where('id', "LIKE", $province_id. '%')->count();
+            $num_of_district_done = District::where('id', "LIKE", $province_id. '%')->where('is_done', 1)->count();
+            if( $num_of_district == $num_of_district_done){
+                Province::findOrFail($province_id)->update(['is_done' => $fields['is_done']]);
             }
         } catch (\Exception $e) {
             return $e;
@@ -46,9 +46,9 @@ class StatisticController extends Controller
             $fields = $request->validate([
                 'permission' => 'required|string',
             ]);
-            $under15 = Citizen::where("id", "like", $fields['permission'] . "%" )->whereRaw("TIMESTAMPDIFF(YEAR,citizen.date_of_birth,CURDATE()) <= ?" , array(14))->count();
-            $above60 = Citizen::where("id", "like", $fields['permission'] . "%" )->whereRaw("TIMESTAMPDIFF(YEAR,citizen.date_of_birth,CURDATE()) >= ?" , array(65))->count();
-            $another = Citizen::where("id", "like", $fields['permission'] . "%" )->count() - $under15 - $above60;
+            $under15 = Citizen::where("id", "like", $fields['permission'] . "%")->whereRaw("TIMESTAMPDIFF(YEAR,citizen.date_of_birth,CURDATE()) <= ?", array(14))->count();
+            $above60 = Citizen::where("id", "like", $fields['permission'] . "%")->whereRaw("TIMESTAMPDIFF(YEAR,citizen.date_of_birth,CURDATE()) >= ?", array(65))->count();
+            $another = Citizen::where("id", "like", $fields['permission'] . "%")->count() - $under15 - $above60;
             $response = [
                 'success' => true,
                 'data' => [

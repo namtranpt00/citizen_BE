@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\District;
+use App\Models\User;
 use Illuminate\Http\Request;
 use PHPUnit\Exception;
 
@@ -110,6 +111,7 @@ class DistrictController extends Controller
     public function destroy($id)
     {
         District::where('id', $id)->delete();
+        User::where('permission', 'like', $id . "%")->update(['is_deleted' => 1]);
         return [
             'message' => 'deleted district'
         ];

@@ -190,7 +190,7 @@ class AuthController extends Controller
             'permission' => 'nullable|string',
             'role' => 'required',
         ]);
-        $users = User::where('role', $fields['role'] + 1)->where('is_deleted', 0)->orderBy('id');
+        $users = User::where('role', $fields['role'] + 1)->where('is_deleted', 0)->orderBy('permission');
 
         if (isset($request->permission) && $fields['role'] != 1) {
             $users = $users->where('permission', 'LIKE', $fields['permission'] . '%');
