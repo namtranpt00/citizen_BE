@@ -25,14 +25,14 @@ class CitizenController extends Controller
                 'permission' => 'required|string',
                 'name' => 'required|string',
                 'ID_number' => 'nullable|string|unique:citizen,ID_number',
-                'date_of_birth' => 'required|date',
-                'gender' => 'required|integer',
-                'hometown' => 'required|string',
-                'permanent_address' => 'required|string',
-                'temporary_address' => 'required|string',
-                'religion' => 'required|string',
-                'education_level' => 'required|string',
-                'job' => 'required|string',
+                'date_of_birth' => 'nullable|date',
+                'gender' => 'nullable|integer',
+                'hometown' => 'nullable|string',
+                'permanent_address' => 'nullable|string',
+                'temporary_address' => 'nullable|string',
+                'religion' => 'nullable|string',
+                'education_level' => 'nullable|string',
+                'job' => 'nullable|string',
             ]);
             $id = $this->genID($request);
             Citizen::create([
@@ -68,16 +68,16 @@ class CitizenController extends Controller
         try {
             $request->validate([
                 'permission' => 'required|string',
-                'name' => 'required|string',
+                'name' => 'nullable|string',
                 'ID_number' => 'nullable|string',
-                'date_of_birth' => 'required|date',
-                'gender' => 'required|integer',
-                'hometown' => 'required|string',
-                'permanent_address' => 'required|string',
-                'temporary_address' => 'required|string',
-                'religion' => 'required|string',
-                'education_level' => 'required|string',
-                'job' => 'required|string',
+                'date_of_birth' => 'nullable|date',
+                'gender' => 'nullable|integer',
+                'hometown' => 'nullable|string',
+                'permanent_address' => 'nullable|string',
+                'temporary_address' => 'nullable|string',
+                'religion' => 'nullable|string',
+                'education_level' => 'nullable|string',
+                'job' => 'nullable|string',
             ]);
             $citizen = Citizen::findOrFail($id);
             if ($citizen) {
