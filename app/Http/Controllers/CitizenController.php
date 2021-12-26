@@ -69,7 +69,7 @@ class CitizenController extends Controller
             $request->validate([
                 'permission' => 'required|string',
                 'name' => 'required|string',
-                'ID_number' => 'nullable|string|unique:citizen,ID_number',
+                'ID_number' => 'nullable|string',
                 'date_of_birth' => 'required|date',
                 'gender' => 'required|integer',
                 'hometown' => 'required|string',
