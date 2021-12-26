@@ -65,7 +65,7 @@ class StatisticController extends Controller
                 'success' => true,
                 'data' => [
                     'under15' => $under15,
-                    '15to64' => $another,
+                    'from15to64' => $another,
                     'above64' => $above60
                 ]
             ];
