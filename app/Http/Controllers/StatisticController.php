@@ -112,4 +112,52 @@ class StatisticController extends Controller
         }
     }
 
+    public function amount_statistic(Request $request){
+        try {
+            $fields = $request->validate([
+                'permission' => 'nullable|string',
+            ]);
+            $data = [];
+            if (strlen($fields['permission']) == 0){
+                $provinces = Province::get();
+                foreach ($provinces as $key => $province){
+                    $amount = Citizen::where('id' , 'like',  $province['id']. "%")->count();
+                    $obj = (object) array("name" => $province['name'], 'amount' => $amount);
+                    array_push($data, $obj);
+                }
+            }
+            if (strlen($fields['permission']) == 2){
+                $districts = District::where('id' , "like", $fields['permission']. "%")->get();
+                foreach ($districts as $key => $district){
+                    $amount = Citizen::where('id' , 'like',  $district['id']. "%")->count();
+                    $obj = (object) array("name" => $district['name'], 'amount' => $amount);
+                    array_push($data, $obj);
+                }
+
+            }
+            if (strlen($fields['permission']) == 4){
+                $wards = Ward::where('id' , "like", $fields['permission']. "%")->get();
+                foreach ($wards as $key => $ward){
+                    $amount = Citizen::where('id' , 'like',  $ward['id']. "%")->count();
+                    $obj = (object) array("name" => $ward['name'], 'amount' => $amount);
+                    array_push($data, $obj);
+                }
+            }
+            if (strlen($fields['permission']) == 6){
+                $hamlets = Hamlet::where('id' , "like", $fields['permission']. "%")->get();
+                foreach ($hamlets as $key => $hamlet){
+                    $amount = Citizen::where('id' , 'like',  $hamlet['id']. "%")->count();
+                    $obj = (object) array("name" => $hamlet['name'], 'amount' => $amount);
+                    array_push($data, $obj);
+                }
+            }
+            $response = [
+                'success' => true,
+                'data' => $data
+            ];
+            return $response;
+        } catch (\Exception $e){
+            return $e;
+        }
+    }
 }
