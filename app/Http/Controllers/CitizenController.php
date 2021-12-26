@@ -23,7 +23,7 @@ class CitizenController extends Controller
         try {
             $request->validate([
                 'permission' => 'required|string',
-                'name' => 'required|string',
+                'name' => 'nullable|string',
                 'ID_number' => 'nullable|string|unique:citizen,ID_number',
                 'date_of_birth' => 'nullable|date',
                 'gender' => 'nullable|integer',
