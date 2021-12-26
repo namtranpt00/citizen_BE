@@ -26,29 +26,20 @@ class StatisticController extends Controller
             $ward_id = substr($fields['permission'], 0, 6);
             $num_of_hamlet = Hamlet::where('id', "LIKE", $ward_id. '%')->count();
             $num_of_hamlet_done = Hamlet::where('id', "LIKE", $ward_id. '%')->where('is_done', 1)->count();
-            if( $num_of_hamlet == $num_of_hamlet_done){
-                Ward::findOrFail($ward_id)->update(['is_done' => 1]);
-            } else {
-                Ward::findOrFail($ward_id)->update(['is_done' => 0]);
-            }
+            $hamlet_percentage = $num_of_hamlet_done * 100 / $num_of_hamlet;
+            Ward::findOrFail($ward_id)->update(['is_done' => $hamlet_percentage]);
 
             $district_id = substr($fields['permission'], 0, 4);
             $num_of_ward = Ward::where('id', "LIKE", $district_id. '%')->count();
-            $num_of_ward_done = Ward::where('id', "LIKE", $district_id. '%')->where('is_done', 1)->count();
-            if( $num_of_ward == $num_of_ward_done){
-                District::findOrFail($district_id)->update(['is_done' => 1]);
-            } else {
-                District::findOrFail($district_id)->update(['is_done' => 0]);
-            }
+            $num_of_ward_done = Ward::where('id', "LIKE", $district_id. '%')->where('is_done', 100)->count();
+            $ward_percentage = $num_of_ward_done * 100 / $num_of_ward;
+            District::findOrFail($district_id)->update(['is_done' => $ward_percentage]);
 
             $province_id = substr($fields['permission'], 0, 2);
             $num_of_district = District::where('id', "LIKE", $province_id. '%')->count();
             $num_of_district_done = District::where('id', "LIKE", $province_id. '%')->where('is_done', 1)->count();
-            if( $num_of_district == $num_of_district_done){
-                Province::findOrFail($province_id)->update(['is_done' => 1]);
-            } else {
-                Province::findOrFail($province_id)->update(['is_done' => 0]);
-            }
+            $district_percentage = $num_of_district_done * 100 / $num_of_district;
+            Province::findOrFail($province_id)->update(['is_done' => $district_percentage]);
         } catch (\Exception $e) {
             return $e;
         }
