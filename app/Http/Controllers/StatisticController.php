@@ -21,7 +21,17 @@ class StatisticController extends Controller
                 'permission' => 'required|string',
                 'is_done' => 'required',
             ]);
-            Ward::findOrFail($fields['permission'])->update(['is_done' => $fields['is_done']]);
+            Hamlet::findOrFail($fields['permission'])->update(['is_done' => $fields['is_done']]);
+
+            $ward_id = substr($fields['permission'], 0, 6);
+            $num_of_hamlet = Hamlet::where('id', "LIKE", $ward_id. '%')->count();
+            $num_of_hamlet_done = Hamlet::where('id', "LIKE", $ward_id. '%')->where('is_done', 1)->count();
+            if( $num_of_hamlet == $num_of_hamlet_done){
+                Ward::findOrFail($ward_id)->update(['is_done' => 1]);
+            } else {
+                Ward::findOrFail($ward_id)->update(['is_done' => 0]);
+            }
+
             $district_id = substr($fields['permission'], 0, 4);
             $num_of_ward = Ward::where('id', "LIKE", $district_id. '%')->count();
             $num_of_ward_done = Ward::where('id', "LIKE", $district_id. '%')->where('is_done', 1)->count();
